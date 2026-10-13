@@ -1,0 +1,4 @@
+faster-whisper
+sounddevice
+scipy
+av==14.2.0

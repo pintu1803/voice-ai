@@ -1,0 +1,100 @@
+# =========================
+# Python Virtual Environment
+# =========================
+.venv/
+venv/
+env/
+ENV/
+
+# =========================
+# Python Cache
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# =========================
+# Python Packaging
+# =========================
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# =========================
+# Jupyter
+# =========================
+.ipynb_checkpoints/
+
+
+# =========================
+# Environment Variables
+# =========================
+.env
+.env.*
+!.env.example
+
+
+# =========================
+# IDE
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# OS Files
+# =========================
+.DS_Store
+Thumbs.db
+
+
+# =========================
+# ML Models
+# =========================
+# Ignore downloaded AI models
+models/
+
+# If you want to keep folder structure:
+# !models/.gitkeep
+
+
+# =========================
+# Audio Files
+# =========================
+# Recorded audio samples
+*.wav
+*.mp3
+*.m4a
+*.flac
+*.ogg
+
+
+# =========================
+# Logs
+# =========================
+logs/
+*.log
+
+
+# =========================
+# Temporary Files
+# =========================
+tmp/
+temp/
+*.tmp
+
+
+# =========================
+# Cache
+# =========================
+.cache/
+.huggingface/
+hf_cache/
+
+
+# =========================
+# Experiment Outputs
+# =========================
+outputs/
+results/
+checkpoints/
