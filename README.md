@@ -9,3 +9,6 @@
 #wav writing expects common PCM format (pulse code modulation - raw audio):
 # uint8, int16 (standard), int32, float32
 
+#whisper uses compute_type="int8", these 2 are different things.
+
+

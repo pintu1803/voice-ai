@@ -1,11 +1,12 @@
 from recorder import record_audio
 from transcriber import SpeechRecognizer
+from vad import VoiceActivityDetector
 import time
-
-SAMPLE_RATE = 16000
-DURATION = 15
+from config import (SAMPLE_RATE, DURATION)
 
 recognizer = SpeechRecognizer()
+vad = VoiceActivityDetector()
+
 
 while(True):
     cmd = input("Record more : ")
@@ -13,8 +14,16 @@ while(True):
         break
 
     timestamp = time.strftime("%Y%m%d_%H%M%S")
-    filename = f"./audio/recording_{timestamp}.wav"
+    audio_filename = f"./audio/recording_{timestamp}.wav"
+    speech_filename = f"./audio/speech_{timestamp}.wav"
 
-    record_audio(filename, DURATION, SAMPLE_RATE)
-    transcript = recognizer.transcribe(filename)
-    print("transcript : ", transcript)
+    #Record
+    record_audio(audio_filename, DURATION, SAMPLE_RATE)
+    #Remove silence
+    vad.remove_silence(audio_filename, speech_filename)
+    #Transcribe
+    transcription_result = recognizer.transcribe(speech_filename)
+    print("Transcript (using VAD): ", transcription_result.text)
+
+    transcription_result = recognizer.transcribe(audio_filename)
+    print("Transcript (without VAD) : ", transcription_result.text)
