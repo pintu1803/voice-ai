@@ -1,46 +1,38 @@
 import torch
-from scipy.io.wavfile import read, write
+from dataclasses import dataclass
+from silero_vad import (load_silero_vad, VADIterator)
 
-from silero_vad import (
-    load_silero_vad,
-    get_speech_timestamps,
-    collect_chunks
-)
+@dataclass
+class VADEvent:
+    speech_started: bool = False
+    speech_ended: bool = False
+    is_speech: bool = False
 
 
 class VoiceActivityDetector:
 
-    def __init__(self):
-
+    def __init__(self): 
         self.model = load_silero_vad()
 
-
-    def remove_silence(
-        self,
-        input_file: str,
-        output_file: str
-    ):
-
-        # Load audio
-        sample_rate, audio = read(input_file)
-        audio = audio.squeeze()
-        wav = torch.tensor(audio, dtype=torch.float32)
-        wav = wav / 32768.0
-
-        print("Sample rate:", sample_rate)
-        print("Audio shape:", wav.shape)
-
-        # Detect speech regions
-        speech_timestamps = get_speech_timestamps(
-            wav,
+        self.iterator = VADIterator(
             self.model,
-            sampling_rate=sample_rate
+            threshold=0.5,
+            sampling_rate=16000
         )
 
-        print("Speech regions:")
-        print(speech_timestamps)
 
-        speech_audio = collect_chunks(speech_timestamps, wav)
-        speech_audio = (speech_audio.numpy() * 32767).astype("int16")
+    def process(self, chunk: torch.Tensor) -> VADEvent:
 
-        write(output_file, sample_rate, speech_audio)
+        result = self.iterator(chunk)
+        event = VADEvent(is_speech=False)
+
+        if result is None:
+            return event
+
+        if "start" in result:
+            event.speech_started = True
+
+        if "end" in result:
+            event.speech_ended = True
+
+        return event
