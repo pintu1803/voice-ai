@@ -6,10 +6,7 @@ from collections import deque
 from scipy.io.wavfile import write
 from recorder_state import RecorderState
 
-SAMPLE_RATE = 16000
-BLOCK_SIZE = 512     # 30ms\
-SILENCE_TIMEOUT = 800   # milliseconds
-PRE_ROLL_CHUNKS = 10
+from config import (SAMPLE_RATE, SILENCE_TIMEOUT, PRE_ROLL_CHUNKS, BLOCK_SIZE)
 
 class Recorder:
 
@@ -30,6 +27,7 @@ class Recorder:
     
     def record(self, filename):
         print("Listening...")
+        self.reset()
 
         with sd.InputStream(
             samplerate=SAMPLE_RATE,
@@ -49,7 +47,10 @@ class Recorder:
                 if audio is not None:
 
                     self.save(filename, audio)
+                    # 1. records one monologue
                     break
+                    # 2. records multiple monologues
+                    # self.reset()
 
 
     def handle_chunk(self, chunk, event):
@@ -61,7 +62,7 @@ class Recorder:
                 print("Speech started")
                 self.state = RecorderState.RECORDING
                 self.audio_buffer.extend(self.pre_roll)
-                self.audio_buffer.append(chunk)
+                self.pre_roll.clear()
 
         elif self.state == RecorderState.RECORDING:
             self.audio_buffer.append(chunk)
@@ -92,3 +93,9 @@ class Recorder:
         audio = (audio.numpy() * 32767).astype("int16")
         write(filename, SAMPLE_RATE, audio)
         print("Saved:", filename)
+
+    def reset(self):
+        self.state = RecorderState.WAITING
+        self.pre_roll.clear()
+        self.audio_buffer = []
+        self.silence_duration = 0
