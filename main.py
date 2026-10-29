@@ -1,6 +1,6 @@
-from vad import VoiceActivityDetector
+from common.vad import VoiceActivityDetector
 from recorder import Recorder
-from transcriber import SpeechRecognizer
+from common.transcriber import SpeechRecognizer
 
 import time
 from config import (SAMPLE_RATE, DURATION)

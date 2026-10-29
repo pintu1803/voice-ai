@@ -1,4 +1,4 @@
-from vad import VoiceActivityDetector
+from common.vad import VoiceActivityDetector
 import sounddevice as sd
 import torch
 

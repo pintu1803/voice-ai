@@ -11,4 +11,8 @@
 
 #whisper uses compute_type="int8", these 2 are different things.
 
+# Make sure dictate/ has an empty __init__.py so it’s treated as a package.
+
+#for local testing, run like this: python -m dictate.dictate
+#from the root dir
 
