@@ -54,10 +54,7 @@ class Recorder:
 
                     save_wav(filename, audio)
                     print("Saved:", filename)
-                    # 1. records one monologue
                     break
-                    # 2. records multiple monologues
-                    # self.reset()
 
 
     def handle_chunk(self, chunk, event):

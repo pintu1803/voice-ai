@@ -1,12 +1,15 @@
 from common.vad import VoiceActivityDetector
 from common.transcriber import SpeechRecognizer
 from start_voice.recorder import Recorder
+from common.llm import GroqLLM
+from common.config import settings
 
 import time
 
 vad = VoiceActivityDetector()
 recorder = Recorder(vad)
 recognizer = SpeechRecognizer()
+llm = GroqLLM(settings.groq_api_key, settings.groq_model, settings.groq_base_url)
 
 
 timestamp = time.strftime("%Y%m%d_%H%M%S")
@@ -15,6 +18,14 @@ speech_filename = f"./audio/speech_{timestamp}.wav"
 
 #Record
 recorder.record(audio_filename)
+
+transcription_result = recognizer.transcribe(audio_filename)
+print("Transcript (using VAD): ", transcription_result.text)
+
+for token in llm.stream(transcription_result.text):
+    print(token, end="", flush=True)
+print()
+
 #Transcribe
 # transcription_result = recognizer.transcribe(speech_filename)
 # print("Transcript (using VAD): ", transcription_result.text)
