@@ -4,7 +4,7 @@ import torch
 
 from collections import deque
 from scipy.io.wavfile import write
-from recorder_state import RecorderState
+from start_voice.recorder_state import RecorderState
 
 from config import (SAMPLE_RATE, SILENCE_TIMEOUT, PRE_ROLL_CHUNKS, BLOCK_SIZE)
 
