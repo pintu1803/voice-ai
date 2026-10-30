@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parents[1]
 class Settings(BaseSettings):
     groq_api_key: str
     groq_model: str
-    grok_base_url: str
+    groq_base_url: str
 
     model_dir: str
     audio_dir: str
@@ -34,8 +34,8 @@ class Settings(BaseSettings):
     admin_api_key: str
 
     @property
-    def model_path(self) -> Path:
-        return BASE_DIR / self.model_dir
+    def model_path(self) -> str:
+        return str(BASE_DIR / self.model_dir)
 
     @property
     def audio_path(self) -> Path:

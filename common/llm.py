@@ -1,4 +1,5 @@
 from openai import OpenAI
+from typing import Iterator
 
 class GroqLLM():
 
@@ -7,7 +8,7 @@ class GroqLLM():
         self.client = OpenAI(api_key=api_key,
                              base_url=base_url)
 
-    def generate(self, prompt:str)-> str:
+    def stream(self, prompt:str)-> Iterator[str]:
 
         try:           
             response = self.client.chat.completions.create(
@@ -16,23 +17,20 @@ class GroqLLM():
                                         {
                                             "role": "system",
                                             "content": """
-                                            You are a Java backend interview assistant.
-                                            Use the retrieved context.
-                                            Explain concepts with examples.
+                                            "You are Kiru, a voice assistant. Reply in short, natural spoken sentences. "
+                                            "Do not use markdown, bullet points, or code blocks."
                                             """
                                         },
-                                        {
-                                            "role": "user",
-                                            "content": prompt
-                                        }
+                                        {"role": "user", "content": prompt}                                     
                                     ],
-                            temperature=0.2
+                            temperature=0.2,
+                            stream=True
                         )
-            content = response.choices[0].message.content if response.choices else None 
-            if not content:
-                raise RuntimeError("Groq returned no text")
-            return str(content)
-        
+            for chunk in response:
+                token = chunk.choices[0].delta.content
+                if token:
+                    yield token
+
         except Exception as e:
             print("GroqLLM generate failed: %s", e)
-            return "Model is unavailable"
+            yield "Model is unavailable"

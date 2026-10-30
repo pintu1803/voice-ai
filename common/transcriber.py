@@ -1,13 +1,13 @@
 from faster_whisper import WhisperModel
 from start_voice.transcription_result import TranscriptionResult
-from common.config import (MODEL_PATH, COMPUTE_TYPE)
+from common.config import settings
 
 class SpeechRecognizer:
     def __init__(self):
         self.model = WhisperModel(
-                    MODEL_PATH,
+                    settings.model_path,
                     device="cpu",
-                    compute_type=COMPUTE_TYPE
+                    compute_type=settings.compute_type
                 )
 
     def transcribe(self, filename: str, language : str | None = "en"):
