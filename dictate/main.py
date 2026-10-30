@@ -2,19 +2,20 @@ from common.vad import VoiceActivityDetector
 from dictate.dictate_recorder import DictateRecorder
 from common.transcriber import SpeechRecognizer
 from common.utils import save_wav
+from common.llm import GroqLLM
 
 import time
-from config import (SAMPLE_RATE, DURATION, BASE_DIR)
+from common.config import settings
 from scipy.io.wavfile import write
 
 
 vad = VoiceActivityDetector()
 recorder = DictateRecorder(vad)
 recognizer = SpeechRecognizer()
-
+llm = GroqLLM(settings.groq_api_key, settings.groq_model, settings.grok_base_url)
 
 timestamp = time.strftime("%Y%m%d_%H%M%S")
-audio_filename = f"{BASE_DIR}/audio/recording_{timestamp}.wav"
+audio_filename = f"{settings.audio_dir}/recording_{timestamp}.wav"
 # speech_filename = f"{BASE_DIR}/audio/speech_{timestamp}.wav"
 
 #Record

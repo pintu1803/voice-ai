@@ -2,7 +2,7 @@ import torch
 from dataclasses import dataclass
 from silero_vad import (load_silero_vad, VADIterator)
 
-from config import (SPEECH_PROB_THRESHOLD, SAMPLE_RATE)
+from common.config import settings
 
 @dataclass
 class VADEvent:
@@ -18,8 +18,8 @@ class VoiceActivityDetector:
 
         self.iterator = VADIterator(
             self.model,
-            threshold=SPEECH_PROB_THRESHOLD,
-            sampling_rate=SAMPLE_RATE
+            threshold=settings.speech_prob_threshold,
+            sampling_rate=settings.sample_rate
         )
 
 

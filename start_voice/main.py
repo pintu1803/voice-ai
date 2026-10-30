@@ -3,7 +3,6 @@ from common.transcriber import SpeechRecognizer
 from start_voice.recorder import Recorder
 
 import time
-from config import (SAMPLE_RATE, DURATION)
 
 vad = VoiceActivityDetector()
 recorder = Recorder(vad)

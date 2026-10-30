@@ -5,8 +5,14 @@ import torch
 from collections import deque
 from scipy.io.wavfile import write
 from start_voice.recorder_state import RecorderState
+from common.utils import (save_wav)
 
-from config import (SAMPLE_RATE, SILENCE_TIMEOUT, PRE_ROLL_CHUNKS, BLOCK_SIZE)
+from common.config import settings
+
+SAMPLE_RATE = settings.sample_rate
+SILENCE_TIMEOUT = settings.silence_timeout 
+PRE_ROLL_CHUNKS = settings.pre_roll_chunks
+BLOCK_SIZE = settings.block_size
 
 class Recorder:
 
@@ -46,7 +52,8 @@ class Recorder:
 
                 if audio is not None:
 
-                    self.save(filename, audio)
+                    save_wav(filename, audio)
+                    print("Saved:", filename)
                     # 1. records one monologue
                     break
                     # 2. records multiple monologues
@@ -88,11 +95,6 @@ class Recorder:
 
         return None
 
-
-    def save(self, filename, audio):
-        audio = (audio.numpy() * 32767).astype("int16")
-        write(filename, SAMPLE_RATE, audio)
-        print("Saved:", filename)
 
     def reset(self):
         self.state = RecorderState.WAITING

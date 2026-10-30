@@ -1,6 +1,6 @@
 from faster_whisper import WhisperModel
 from start_voice.transcription_result import TranscriptionResult
-from config import (MODEL_PATH, COMPUTE_TYPE)
+from common.config import (MODEL_PATH, COMPUTE_TYPE)
 
 class SpeechRecognizer:
     def __init__(self):

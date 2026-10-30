@@ -2,7 +2,7 @@ import threading
 import sounddevice as sd
 import torch
 
-from config import (SAMPLE_RATE, BLOCK_SIZE, DICTATE_IDLE_TIMEOUT_MS)
+from common.config import (SAMPLE_RATE, BLOCK_SIZE, DICTATE_IDLE_TIMEOUT_MS)
 
 TAIL_CHUNKS = 15   # keep a little silence after the last speech (~0.5 s at 512 samples/16 kHz)
 
