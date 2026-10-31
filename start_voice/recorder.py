@@ -10,9 +10,10 @@ from common.utils import (save_wav)
 from common.config import settings
 
 SAMPLE_RATE = settings.sample_rate
-SILENCE_TIMEOUT = settings.silence_timeout 
+SILENCE_TIMEOUT = settings.end_of_speech_silence_ms 
 PRE_ROLL_CHUNKS = settings.pre_roll_chunks
 BLOCK_SIZE = settings.block_size
+chunk_ms = (BLOCK_SIZE / SAMPLE_RATE * 1000)
 
 class Recorder:
 
@@ -22,6 +23,7 @@ class Recorder:
         self.pre_roll = deque(maxlen=PRE_ROLL_CHUNKS)
         self.audio_buffer = []
         self.silence_duration = 0
+        # self.stop_event = False
 
 
     def convert_chunk(self, chunk):
@@ -31,9 +33,12 @@ class Recorder:
         return chunk
 
     
-    def record(self, filename):
-        print("Listening...")
+    def listen(self, stop_event, voice_idle_timeout_ms):
         self.reset()
+
+        idle_ms = 0
+
+        print("Listening...")
 
         with sd.InputStream(
             samplerate=SAMPLE_RATE,
@@ -42,20 +47,26 @@ class Recorder:
             blocksize=BLOCK_SIZE
         ) as stream:
 
-            while True:
+            while not stop_event.is_set():
 
-                chunk, overflow = stream.read(BLOCK_SIZE)
-                chunk = self.convert_chunk(chunk)
+                raw, overflow = stream.read(BLOCK_SIZE)
+                chunk = self.convert_chunk(raw) 
                 event = self.vad.process(chunk)
 
                 audio = self.handle_chunk(chunk, event)
 
                 if audio is not None:
+                    return audio, "utterance"
+                    # save_wav(filename, audio)
+                    # print("Saved:", filename)
+                    # break
+                
+                if self.state == RecorderState.WAITING:
+                    idle_ms += chunk_ms
+                    if idle_ms >= settings.voice_idle_timeout_ms:
+                        return None, "idle_timeout"
 
-                    save_wav(filename, audio)
-                    print("Saved:", filename)
-                    break
-
+        return None, "stopped"
 
     def handle_chunk(self, chunk, event):
 
@@ -78,7 +89,7 @@ class Recorder:
 
         elif self.state == RecorderState.ENDING:
             self.audio_buffer.append(chunk)
-            self.silence_duration += (BLOCK_SIZE / SAMPLE_RATE * 1000)
+            self.silence_duration += chunk_ms
 
             if event.speech_started:
                 print("Speech resumed")
@@ -90,6 +101,7 @@ class Recorder:
 
                 return torch.cat(self.audio_buffer)
 
+        # recording not finished # voice command still building
         return None
 
 

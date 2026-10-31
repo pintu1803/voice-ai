@@ -34,3 +34,22 @@ class GroqLLM():
         except Exception as e:
             print("GroqLLM generate failed: %s", e)
             yield "Model is unavailable"
+
+
+    def stream_chat(self, messages: list[dict]) -> Iterator[str]:
+        try:
+            response = self.client.chat.completions.create( # pyright: ignore[reportCallIssue, reportArgumentType]
+                        model=self.model,
+                        messages=messages, # pyright: ignore[reportCallIssue, reportArgumentType]
+                        temperature=0.4,
+                        stream=True
+            )
+            for chunk in response:
+                if not chunk.choices:
+                    continue
+                token = chunk.choices[0].delta.content
+                if token:
+                    yield token
+        except Exception:
+            print("GroqLLM stream_chat failed")
+            yield "Sorry, I couldn't reach the model."

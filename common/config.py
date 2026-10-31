@@ -20,10 +20,11 @@ class Settings(BaseSettings):
 
     speech_prob_threshold: float
     block_size: int
-    silence_timeout: int
     pre_roll_chunks: int
 
     dictate_idle_timeout_ms: int
+    voice_idle_timeout_ms: int
+    end_of_speech_silence_ms: int
 
     smtp_host: str
     smtp_port: int

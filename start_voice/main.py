@@ -1,37 +1,28 @@
+import threading
+
 from common.vad import VoiceActivityDetector
 from common.transcriber import SpeechRecognizer
-from start_voice.recorder import Recorder
 from common.llm import GroqLLM
 from common.config import settings
-
-import time
-
-vad = VoiceActivityDetector()
-recorder = Recorder(vad)
-recognizer = SpeechRecognizer()
-llm = GroqLLM(settings.groq_api_key, settings.groq_model, settings.groq_base_url)
+from start_voice.recorder import Recorder
+from start_voice.session import VoiceSession
 
 
-timestamp = time.strftime("%Y%m%d_%H%M%S")
-audio_filename = f"./audio/recording_{timestamp}.wav"
-speech_filename = f"./audio/speech_{timestamp}.wav"
+def main():
+    session = VoiceSession(
+        recorder=Recorder(VoiceActivityDetector()),
+        recognizer=SpeechRecognizer(),
+        llm=GroqLLM(settings.groq_api_key, settings.groq_model, settings.groq_base_url),
+        voice_idle_timeout_ms=settings.voice_idle_timeout_ms,
+    )
 
-#Record
-recorder.record(audio_filename)
+    def wait_for_enter():
+        input("Press Enter to stop voice chat.\n")
+        session.stop()
 
-transcription_result = recognizer.transcribe(audio_filename)
-print("Transcript (using VAD): ", transcription_result.text)
-
-for token in llm.stream(transcription_result.text):
-    print(token, end="", flush=True)
-print()
-
-#Transcribe
-# transcription_result = recognizer.transcribe(speech_filename)
-# print("Transcript (using VAD): ", transcription_result.text)
-
-# transcription_result = recognizer.transcribe(audio_filename)
-# print("Transcript (without VAD) : ", transcription_result.text)
+    threading.Thread(target=wait_for_enter, daemon=True).start()
+    session.run()
 
 
-
+if __name__ == "__main__":
+    main()
