@@ -5,7 +5,7 @@ from common.config import settings
 class SpeechRecognizer:
     def __init__(self):
         self.model = WhisperModel(
-                    settings.model_path,
+                    settings.stt_model_path,
                     device="cpu",
                     compute_type=settings.compute_type
                 )

@@ -88,6 +88,7 @@ class DictateRecorder:
             return None, reason
 
         # Manual stop and speech recorded -> needs no trim
+        # We not sure if silence was there at the end, trim is risky move
 
         # return single vector tensor with reason to stop
         return torch.cat(chunks), reason

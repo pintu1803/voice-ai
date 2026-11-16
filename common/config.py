@@ -35,7 +35,7 @@ class Settings(BaseSettings):
     admin_api_key: str
 
     @property
-    def model_path(self) -> str:
+    def stt_model_path(self) -> str:
         return str(BASE_DIR / self.model_dir)
 
     @property

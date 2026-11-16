@@ -22,6 +22,10 @@ class VoiceActivityDetector:
             sampling_rate=settings.sample_rate
         )
 
+    #vad iterator produces an event only when a change is detected
+    #None: when no change detected, either silence continues or speech continues
+    #start: timestamp
+    #end: timestamp
 
     def process(self, chunk: torch.Tensor) -> VADEvent:
 
