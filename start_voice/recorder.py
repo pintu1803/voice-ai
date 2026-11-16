@@ -55,18 +55,24 @@ class Recorder:
 
                 audio = self.handle_chunk(chunk, event)
 
+                #handle_chunk returns full recording only once it finishes
+                #if still recording, then returns None
+                #and listening does not stop for None return value
+
+                #handle_chunk returns the full audio after silence timeout hit
                 if audio is not None:
                     return audio, "utterance"
-                    # save_wav(filename, audio)
-                    # print("Saved:", filename)
-                    # break
+
                 
+                #if there was no audio from the beginning itself, then handle chunk keeps returning None
+                #this if block captures that timeout
                 if self.state == RecorderState.WAITING:
                     idle_ms += chunk_ms
                     if idle_ms >= settings.voice_idle_timeout_ms:
                         return None, "idle_timeout"
 
         return None, "stopped"
+        #if no timeout happened, then recorder was stopped manually
 
     def handle_chunk(self, chunk, event):
 
