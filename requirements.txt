@@ -11,3 +11,5 @@ torch==2.9.0
 openai
 
 pydantic_settings # for settings
+
+pyttsx3==2.98

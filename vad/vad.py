@@ -2,7 +2,7 @@ import torch
 from dataclasses import dataclass
 from silero_vad import (load_silero_vad, VADIterator)
 
-from common.config import (SPEECH_PROB_THRESHOLD, SAMPLE_RATE)
+from common.config import settings
 
 @dataclass
 class VADEvent:
@@ -18,10 +18,14 @@ class VoiceActivityDetector:
 
         self.iterator = VADIterator(
             self.model,
-            threshold=SPEECH_PROB_THRESHOLD,
-            sampling_rate=SAMPLE_RATE
+            threshold=settings.speech_prob_threshold,
+            sampling_rate=settings.sample_rate
         )
 
+    #vad iterator produces an event only when a change is detected
+    #None: when no change detected, either silence continues or speech continues
+    #start: timestamp
+    #end: timestamp
 
     def process(self, chunk: torch.Tensor) -> VADEvent:
 

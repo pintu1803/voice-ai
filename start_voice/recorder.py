@@ -9,6 +9,8 @@ from common.utils import (save_wav)
 
 from common.config import settings
 
+import pyttsx3
+
 SAMPLE_RATE = settings.sample_rate
 SILENCE_TIMEOUT = settings.end_of_speech_silence_ms 
 PRE_ROLL_CHUNKS = settings.pre_roll_chunks
